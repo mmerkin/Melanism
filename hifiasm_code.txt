@@ -1,0 +1,9 @@
+#Count kmers to estimate the genome size
+
+./yak count -b37 -t16 -o pat.yak <(cat /pub64/mattm/Ob_typica/Ob_pat_reads/16-Ob_05_Pmale_AATCCGGAAT-AACTGTAGGT_L004_R1_001.fastq.gz /pub64/mattm/Ob_typica/Ob_pat_reads/16-Ob_05_Pmale_AATCCGGAAT-AACTGTAGGT_L004_R2_001.fastq.gz) <(cat /pub64/mattm/Ob_typica/Ob_pat_reads/16-Ob_05_Pmale_AATCCGGAAT-AACTGTAGGT_L004_R1_001.fastq.gz /pub64/mattm/Ob_typica/Ob_pat_reads/16-Ob_05_Pmale_AATCCGGAAT-AACTGTAGGT_L004_R2_001.fastq.gz)
+
+./yak count -b37 -t16 -o mat.yak <(cat /pub64/mattm/Ob_typica/Ob_mat_reads/15-Ob_05_Pfemale_GGCTTAAGAT-GGTCACGAGT_L004_R1_001.fastq.gz /pub64/mattm/Ob_typica/Ob_mat_reads/15-Ob_05_Pfemale_GGCTTAAGAT-GGTCACGAGT_L004_R2_001.fastq.gz) <(cat /pub64/mattm/Ob_typica/Ob_mat_reads/15-Ob_05_Pfemale_GGCTTAAGAT-GGTCACGAGT_L004_R1_001.fastq.gz /pub64/mattm/Ob_typica/Ob_mat_reads/15-Ob_05_Pfemale_GGCTTAAGAT-GGTCACGAGT_L004_R2_001.fastq.gz)
+
+# Assemble the first Ob_typica genome with trio binning
+
+hifiasm -o Ob_HiFi.asm -t32 -1 pat.yak -2 mat.yak Ob_HiFi.fastq.gz
