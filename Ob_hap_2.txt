@@ -1,0 +1,51 @@
+# Ob_hap_2
+
+# Yak trioeval: W is switch error rate and H is hammering error rate
+
+W       5995    2673081 0.002243
+H       4250    2673218 0.001590
+N       4250    2668969 0.001590
+
+# Busco/compleasm: genome completeness
+
+S:95.40%, 5043
+D:0.23%, 12
+F:0.00%, 0
+I:0.00%, 0
+M:4.37%, 231
+N:5286
+
++++Assembly summary+++: 
+# scaffolds: 138
+Total scaffold length: 480576125
+Average scaffold length: 3482435.69
+Scaffold N50: 14316982
+Scaffold auN: 12691307.84
+Scaffold L50: 14
+Largest scaffold: 19957252
+Smallest scaffold: 7683
+# contigs: 138
+Total contig length: 480576125
+Average contig length: 3482435.69
+Contig N50: 14316982
+Contig auN: 12691307.84
+Contig L50: 14
+Largest contig: 19957252
+Smallest contig: 7683
+# gaps in scaffolds: 0
+Total gap length in scaffolds: 0
+Average gap length in scaffolds: 0.00
+Gap N50 in scaffolds: 0
+Gap auN in scaffolds: 0.00
+Gap L50 in scaffolds: 0
+Largest gap in scaffolds: 0
+Smallest gap in scaffolds: 0
+Base composition (A:C:G:T): 147982951:92336945:92338507:147917722
+GC content %: 38.43
+# soft-masked bases: 0
+# segments: 138
+Total segment length: 480576125
+Average segment length: 3482435.69
+# gaps: 0
+# paths: 138
+
