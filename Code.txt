@@ -20,7 +20,7 @@ hifiasm -o Pp_HiFi.asm -t32 -1 Pp_pat.yak -2 Pp_mat.yak Pp_HiFi.fastq.gz
 
 # Copy files from the server to my laptop
 
-scp -r mattm@euler01.liv.ac.uk:/pub64/mattm/Ob_typica/assembly /Downloads
+scp -r username@server.address:/pub64/mattm/Ob_typica/assembly ~/Downloads
 
 # Convert a gfa file to an fa file
 
