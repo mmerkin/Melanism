@@ -1,0 +1,103 @@
+
+# Code used to generate assemblies from PacBio reads then scaffold them using HiC data
+
+# Count kmers
+
+./yak count -b37 -t16 -o pat.yak <(cat /pub64/mattm/Ob_typica/Ob_pat_reads/16-Ob_05_Pmale_AATCCGGAAT-AACTGTAGGT_L004_R1_001.fastq.gz /pub64/mattm/Ob_typica/Ob_pat_reads/16-Ob_05_Pmale_AATCCGGAAT-AACTGTAGGT_L004_R2_001.fastq.gz) <(cat /pub64/mattm/Ob_typica/Ob_pat_reads/16-Ob_05_Pmale_AATCCGGAAT-AACTGTAGGT_L004_R1_001.fastq.gz /pub64/mattm/Ob_typica/Ob_pat_reads/16-Ob_05_Pmale_AATCCGGAAT-AACTGTAGGT_L004_R2_001.fastq.gz)
+
+./yak count -b37 -t16 -o mat.yak <(cat /pub64/mattm/Ob_typica/Ob_mat_reads/15-Ob_05_Pfemale_GGCTTAAGAT-GGTCACGAGT_L004_R1_001.fastq.gz /pub64/mattm/Ob_typica/Ob_mat_reads/15-Ob_05_Pfemale_GGCTTAAGAT-GGTCACGAGT_L004_R2_001.fastq.gz) <(cat /pub64/mattm/Ob_typica/Ob_mat_reads/15-Ob_05_Pfemale_GGCTTAAGAT-GGTCACGAGT_L004_R1_001.fastq.gz /pub64/mattm/Ob_typica/Ob_mat_reads/15-Ob_05_Pfemale_GGCTTAAGAT-GGTCACGAGT_L004_R2_001.fastq.gz)
+
+# Assemble the first Ob genome with trio binning
+
+hifiasm -o Ob_HiFi.asm -t32 -1 pat.yak -2 mat.yak Ob_HiFi.fastq.gz
+
+
+# Repeat the process using Pp reads
+
+./yak count -b37 -t16 -o Pp_pat.yak <(cat /pub64/mattm/Pp_typica/Pp_pat_reads/18-Pp_8PMale_CGGCGTGAAT-ACAGGCGCGT_L004_R1_001.fastq.gz /pub64/mattm/Pp_typica/Pp_pat_reads/18-Pp_8PMale_CGGCGTGAAT-ACAGGCGCGT_L004_R2_001.fastq.gz) <(cat /pub64/mattm/Pp_typica/Pp_pat_reads/18-Pp_8PMale_CGGCGTGAAT-ACAGGCGCGT_L004_R1_001.fastq.gz /pub64/mattm/Pp_typica/Pp_pat_reads/18-Pp_8PMale_CGGCGTGAAT-ACAGGCGCGT_L004_R2_001.fastq.gz)
+
+./yak count -b37 -t16 -o Pp_mat.yak <(cat /pub64/mattm/Pp_typica/Pp_mat_reads/17-Pp_8PFemale_TAATACAGAT-GTGAATATGT_L004_R1_001.fastq.gz /pub64/mattm/Pp_typica/Pp_mat_reads/17-Pp_8PFemale_TAATACAGAT-GTGAATATGT_L004_R2_001.fastq.gz) <(cat /pub64/mattm/Pp_typica/Pp_mat_reads/17-Pp_8PFemale_TAATACAGAT-GTGAATATGT_L004_R1_001.fastq.gz /pub64/mattm/Pp_typica/Pp_mat_reads/17-Pp_8PFemale_TAATACAGAT-GTGAATATGT_L004_R2_001.fastq.gz)
+
+hifiasm -o Pp_HiFi.asm -t32 -1 Pp_pat.yak -2 Pp_mat.yak Pp_HiFi.fastq.gz
+
+
+# Convert a gfa file to an fa file
+
+./gfatools gfa2fa hap1.p_ctg.gfa > hap1_p_ctg.fa 
+./gfatools gfa2fa hap2.p_ctg.gfa > hap2_p_ctg.fa 
+./gfatools gfa2fa Pp_hap1.p_ctg.gfa > Pp_hap1_p_ctg.fa 
+./gfatools gfa2fa Pp_hap2.p_ctg.gfa > Pp_hap2_p_ctg.fa 
+
+# Calculate switch and hammer error rate
+
+./yak trioeval -t16 Ob_typica/Ob_pat.yak Ob_typica/Ob_mat.yak Ob_typica/Ob_hap1_p_ctg.fa
+./yak trioeval -t16 Ob_typica/Ob_pat.yak Ob_typica/Ob_mat.yak Ob_typica/Ob_hap2_p_ctg.fa
+./yak trioeval -t16 Pp_typica/Pp_pat.yak Pp_typica/Pp_mat.yak Pp_typica/Pp_hap1_p_ctg.fa
+./yak trioeval -t16 Pp_typica/Pp_pat.yak Pp_typica/Pp_mat.yak Pp_typica/Pp_hap2_p_ctg.fa
+
+
+# Calculate genome completeness with compleasm (fast busco)
+
+compleasm run -a hap1_p_ctg.fa -o hap1_output -t 16 -l lepidoptera
+compleasm run -a hap2_p_ctg.fa -o hap2_output -t 16 -l lepidoptera
+compleasm run -a Pp_hap1_p_ctg.fa -o Pp_hap1_output -t 16 -l lepidoptera
+compleasm run -a Pp_hap2_p_ctg.fa -o Pp_hap2_output -t 16 -l lepidoptera
+
+
+# Extract HiC fastq reads from cram files
+
+samtools fastq -@16 -1 Ob_HiC_R1.fastq.gz -2 Ob_HiC_R2.fastq.gz 44743_3#3.cram
+samtools fastq -@16 -1 Pp_HiC_R1.fastq.gz -2 Pp_HiC_R2.fastq.gz 38689_3#5.cram
+
+# Scaffold the trio melanic haplotype using the hic data:
+# Use the arima mapping pipeline (see separate example file) to map the reads to the assembly and then run:
+
+yahs contigs.fa hic-to-contigs.bam
+
+
+# Produce HiC contact maps:
+# Extract first two columns that contain the chromosome names and sizes
+cut -f1-2 < "yahs.out_scaffolds_final.fa.fai" > "Ob_chroms_sizes.txt"
+cut -f1-2 < "yahs.out_scaffolds_final.fa.fai" > "Pp_chroms_sizes.txt"
+
+# Convert scaffolds to juicer readable format
+(juicer pre yahs.out.bin yahs.out_scaffolds_final.agp /pub64/mattm/assemblies/Ob_typica/Ob_hap1_p_ctg.fa.fai | sort -k2,2d -k6,6d -T ./ --parallel=8 -S32G | awk 'NF' > alignments_sorted.txt.part) && (mv alignments_sorted.txt.part alignments_sorted.txt)
+(juicer pre yahs.out.bin yahs.out_scaffolds_final.agp Pp_hap1_p_ctg.fa.fai | sort -k2,2d -k6,6d -T ./ --parallel=8 -S32G | awk 'NF' > alignments_sorted.txt.part) && (mv alignments_sorted.txt.part alignments_sorted.txt)
+
+# Use juicer to create a hic file 
+(java -jar -Xmx32G /pub64/mattm/apps/juicer_tools_1.22.01.jar pre alignments_sorted.txt out.hic.part Ob_chroms_sizes.txt) && (mv out.hic.part out.hic)
+(java -jar -Xmx32G /pub64/mattm/apps/juicer_tools_1.22.01.jar pre alignments_sorted.txt out.hic.part Pp_chroms_sizes.txt) && (mv out.hic.part out.hic)
+
+# Run juicebox to visualise the hic file
+java -jar Juicebox_1.11.08.jar
+
+
+
+
+# Use haphic to merge scaffolds
+# Note, conda wouldn't work with the specified environment, so a new one was created by installing the following tools:
+# conda install _libgcc_mutex _openmp_mutex blas bzip2 ca-certificates expat intel-cmplr-lib-ur intel-openmp ld_impl_linux-64 libffi libgcc-ng libgfortran-ng libgfortran5 libgomp
+# conda install libopenblas libstdcxx-ng libuuid mkl ncurses numpy numpy-base openblas openssl pip pybind11-abi python
+# conda install readline setuptools sparse_dot_mkl sqlite tbb tk tzdata wheel xz zlib
+# pip install contourpy==1.2.1 cycler==0.12.1 fonttools==4.53.1 joblib==1.4.2 kiwisolver==1.4.5 matplotlib==3.9.1 networkx==3.3 packaging==24.1 pillow==10.4.0 portion==2.4.2 
+# pip install pyparsing==3.1.2 pysam==0.22.1 python-dateutil==2.9.0.post0 scikit-learn==1.5.1 scipy==1.14.0 six==1.16.0 sortedcontainers==2.4.0 threadpoolctl==3.5.0
+
+/pub64/mattm/apps/HapHiC/haphic pipeline Ob_hap1_p_ctg.fa /pub64/mattm/assemblies/Ob_typica_lowMQ/duplicated/Ob_final_rep1.bam 31 --correct_nrounds 5 --threads 32
+
+/pub64/mattm/apps/HapHiC/haphic pipeline Pp_hap1_p_ctg.fa /pub64/mattm/assemblies/Pp_typica_lowMQ/duplicated/Pp_final_rep1.bam 112 --correct_nrounds 10 --threads 32 
+
+# Use seqkit to extract the 31 chromosomes of Ob, however, haphic only made 1 chromosome for Pp, so the scaffolds were used instead- likely due to it possessing numerous small chromosomes
+
+seqkit head -n 31 scaffolds.fa > Ob_genome.fa 
+
+
+# Use hifiasm with hic data to create assemblies for the individuals lacking trio data
+
+hifiasm -o Ob_nigra.asm -t32 --h1 /pub64/mattm/assemblies/Ob_typica/Ob_HiC_R1.fastq.gz --h2 /pub64/mattm/assemblies/Ob_typica/Ob_HiC_R2.fastq.gz Ob_nigra_HiFi.fastq.gz
+
+hifiasm -o Pp_monacharia.asm -t32 --h1 /pub64/mattm/assemblies/Pp_typica/Pp_HiC_R1.fastq.gz --h2 /pub64/mattm/assemblies/Pp_typica/Pp_HiC_R2.fastq.gz Pp_monacharia_HiFi.fastq.gz
+
+
+
+
+

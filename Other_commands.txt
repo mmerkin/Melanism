@@ -1,0 +1,77 @@
+Other commands
+
+# Blast
+
+makeblastdb -in Ob_genome.fa -dbtype nucl -out db/Ob
+
+tblastn -db db/Ob -query parn.fasta > parn_hits
+
+tblastn -db db/Pp -query cortex_protein.fasta > Pp_cortex_protein_hits
+
+
+# Run haplostrips on my cgr account (needs conda environment haplostrips)
+
+/pub64/mattm/miniconda3/bin/haplostrips -h
+
+/pub64/mattm/miniconda3/bin/haplostrips -V Ob_haplostrips.vcf -P Ob_sample_names.txt  -i group11:4000000-4600000
+
+
+# Normalise and sort vcf
+
+bcftools norm -f Ob_genome.fa -m- -o Ob_raw_merged_norm.vcf Ob_raw_merged.vcf 
+
+bcftools norm -f Pp_scaffolds.fa -m- -o Pp_filtered_norm.vcf Pp_raw_intermediate.recode.vcf
+
+bcftools sort -o Pp_raw_norm_sorted.vcf Pp_raw_norm.vcf
+
+bcftools annotate -x 'FORMAT/GL' Ob_raw_merged_norm_sorted.vcf > Ob_raw_norm_nogl.vcf
+
+bcftools norm -d both --threads=32 -o Pp_raw_norm_nogl_d.vcf Pp_raw_norm_nogl.vcf
+
+bcftools sort -o Pp_raw_norm_nogl_d_sorted.vcf Pp_raw_norm_nogl_d.vcf
+
+
+# Filter vcf
+
+bcftools filter -e 'FMT/GQ < 200' --set-GTs . Ob_preGQfilter.vcf.gz | bgzip >  Ob_GQ200.vcf.gz
+
+
+
+# Perform PCA using plink
+
+plink --vcf Ob_raw_norm_nogl_d_sorted.vcf --double-id --allow-extra-chr \
+--set-missing-var-ids @:# \
+--vcf-half-call m --allow-no-sex \
+--indep-pairwise 50 10 0.1 --out Ob_plink
+
+
+plink --vcf Ob_raw_norm_nogl_d_sorted.vcf --double-id --allow-extra-chr --set-missing-var-ids @:# \
+--vcf-half-call m --allow-no-sex \
+--extract Ob_plink.prune.in \
+--make-bed --pca --out Ob_plink
+
+
+# Filter a vcf by GQ
+
+
+bcftools filter -e 'FMT/GQ < 200' --set-GTs . -o Ob_d_200.vcf Ob_raw_norm_nogl_d_sorted.vcf
+
+
+# Phase a vcf
+
+shapeit4 --input Ob_no_haplotype.recode.vcf.gz --region group11 --output g11_nohap_phased.vcf --thread 32
+
+# Calculate the average depth of a bam file
+
+samtools depth /pub64/mattm/read_mapping/Ob/dedup/Sample_11_41-MTW_2013_21_t.dedup.bam  | awk '{sum+=$3} END { print "Average = ",sum/NR}'
+
+# Extract a specific variant from a vcf
+
+grep ">1720245>1720248" Ob_raw_norm_nogl_d_sorted.vcf > candidate_1.txt
+
+
+
+
+
+
+

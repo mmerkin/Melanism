@@ -1,0 +1,48 @@
+
+# Manta
+
+# Run script on github, then run the new script it creates
+
+./run_manta.sh
+./Ob_SVs/run_workflow.py -j 20 # Must specify j or there will be an error
+
+
+# Use plink to find associations in the manta vcf
+
+plink --vcf diploidSV.vcf --double-id --allow-extra-chr \
+--set-missing-var-ids @:# \
+--make-bed --out Ob_manta_plink \
+--vcf-half-call m --allow-no-sex --pheno Ob_manta_phenotypes.txt
+
+plink --bfile Ob_manta_plink --assoc --out Ob_manta_ass --allow-extra-chr --allow-no-sex
+
+sort --key=8 -nr Ob_manta_ass.assoc | head
+
+
+
+# Freebayes
+
+samtools faidx ref/reference.fa
+
+# Run bamaddrg script on github
+
+freebayes-parallel <(fasta_generate_regions.py "ref/Pp_scaffolds.fa.fai" 100000) 36 -f ref/Pp_scaffolds.fa "Pp_freebayes_bamaddrg.bam" | vcffilter -f "QUAL > 20" >Pp_freebayes_results.vcf
+
+freebayes-parallel <(fasta_generate_regions.py "ref/Ob_genome.fa.fai" 100000) 60 -f ref/Ob_genome.fa "Ob_freebayes_bamaddrg.bam" | vcffilter -f "QUAL > 20" >Ob_freebayes_bam.vcf
+
+
+# Faster version with limit coverage (skips many variants)- use for eg pca
+
+freebayes-parallel <(fasta_generate_regions.py "ref/Ob_genome.fa.fai" 100000) 60 -f ref/Ob_genome.fa -g 200 --limit-coverage 100  "Ob_freebayes_bamaddrg.bam" | vcffilter -f "QUAL > 20" >Ob_freebayes_bam.vcf
+
+freebayes-parallel <(fasta_generate_regions.py "ref/Pp_scaffolds.fa.fai" 100000) 36 -f ref/Pp_scaffolds.fa -g 200 --limit-coverage 100 "Pp_freebayes_bamaddrg.bam" | vcffilter -f "QUAL > 20" >Pp_freebayes_results.vcf
+
+
+# Insurveyor
+
+# Use the github scripts run_insurveyor.sh and run_merge.sh
+
+
+
+
+

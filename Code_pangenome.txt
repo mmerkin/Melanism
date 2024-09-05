@@ -1,0 +1,47 @@
+# Code to make/map a pangenome
+
+# Use cactus to generate the pangenome
+
+cactus-pangenome job_store Ob_contigs.txt --outDir output_files --outName Ob_pangenome --reference reference --viz --odgi --chrom-vg clip filter --chrom-og --gbz clip filter full --gfa clip full --vcf --vcfReference reference --logFile ./Ob_pangenome.log --consCores 8
+
+cactus-pangenome job_store Pp_contigs.txt --outDir output_files --outName Pp_pangenome --reference reference --viz --odgi --chrom-vg clip filter --chrom-og --gbz clip filter full --gfa clip full --vcf --vcfReference reference --logFile ./Pp_pangenome.log --consCores 8
+
+# Use vcflib and bcftools to remove any overlapping variants from the vcf file
+
+vcfwave -I 15000 -t 32 Ob_pangenome.vcf > Ob_pangenome.wave.vcf
+vcfwave -I 15000 -t 32 Pp_pangenome.vcf > Pp_pangenome.wave.vcf
+
+bcftools norm -m- Ob_pangenome.wave.vcf -o Ob_pangenome_norm.vcf --threads 32
+bcftools norm -m- Pp_pangenome.wave.vcf -o Pp_pangenome_norm.vcf --threads 32 
+
+bcftools sort -o Ob_pangenome_norm_sorted.vcf Ob_pangenome_norm.vcf # total/split/realigned/skipped:	10632986/41420/0/0
+bcftools sort -o Pp_pangenome_norm_sorted.vcf Pp_pangenome_norm.vcf # total/split/realigned/skipped:	7573468/19975/0/0
+
+vcfcreatemulti Ob_pangenome_norm_sorted.vcf > Ob_pangenome_multi.vcf
+vcfcreatemulti Pp_pangenome_norm_sorted.vcf > Pp_pangenome_multi.vcf
+
+# Remove variants with more than 200 alleles since max is 254
+bcftools view --max-alleles 200 Ob_pangenome_multi.vcf > Ob_pangenome_reduced_multi.vcf 
+bcftools view --max-alleles 200 Pp_pangenome_multi.vcf > Pp_pangenome_reduced_multi.vcf
+
+
+
+# Index pangenie 
+
+/pub64/mattm/apps/pangenie/build/src/PanGenie-index -v Ob_pangenome_reduced_multi.vcf -r Ob_genome.fa -t 32 -o Ob_pangenie
+/pub64/mattm/apps/pangenie/build/src/PanGenie-index -v Pp_pangenome_reduced_multi.vcf -r Pp_scaffolds.fa -t 32 -o Pp_pangenie
+
+# Run pangenie using bash script provided on github
+
+# Merge output vcfs:
+# Remove info field:
+bcftools annotate -x INFO Ob_pangenome_reduced_multi.vcf > Ob_pangenome_noinfo_reduced_multi.vcf # Error thrown during merge due to poorly annotated info field
+bcftools annotate -x INFO Pp_pangenome_reduced_multi.vcf > Pp_pangenome_noinfo_reduced_multi.vcf
+
+# gzip and index all vcf files in a directory
+parallel bgzip {} ::: *.vcf
+for f in ./*.vcf.gz; do tabix -p vcf -f $f;done
+
+# Merge the vcf files
+bcftools merge *.vcf.gz --threads 32 -o Ob_merged.vcf.gz
+bcftools merge *.vcf.gz --threads 32 -o Pp_merged.vcf.gz

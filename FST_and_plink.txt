@@ -1,0 +1,107 @@
+FST analysis:
+
+#LD decay
+
+
+plink --vcf Ob_merged.vcf.gz --double-id --allow-extra-chr \
+--set-missing-var-ids @:# \
+--maf 0.01 --geno 0.1 --mind 0.5 --chr group11 \
+--thin 0.1 -r2 gz --ld-window 100 --ld-window-kb 1000 \
+--ld-window-r2 0 \
+--make-bed --out Ob_plink_group11 \
+--vcf-half-call m --allow-no-sex --pheno Ob_phenotypes.txt 
+
+
+plink --vcf Pp_merged.vcf.gz --double-id --allow-extra-chr \
+--set-missing-var-ids @:# \
+--maf 0.01 --geno 0.1 --mind 0.5 --chr scaffold_45 \
+--thin 0.1 -r2 gz --ld-window 100 --ld-window-kb 1000 \
+--ld-window-r2 0 \
+--make-bed --out Pp_plink_scaffold45 \
+--vcf-half-call m --allow-no-sex --pheno Pp_phenotypes.txt 
+
+
+# Download this script: https://github.com/speciationgenomics/scripts/blob/master/ld_decay_calc.py 
+
+ld_decay_calc.py -i Ob_plink_group11.ld.gz -o Ob_plink_g11
+ld_decay_calc.py -i Pp_plink_scaffold45.ld.gz -o Pp_plink_scaffold45
+
+
+
+vcf-query -l Ob_merged.vcf > Ob_sample_names.txt 
+vcf-query -l Pp_merged.vcf > Pp_sample_names.txt 
+
+grep 't$' Ob_sample_names.txt  > pre1_Ob_typica_names.txt
+grep '[1-6]$' Ob_sample_names.txt  > pre2_Ob_typica_names.txt
+cat pre1_Ob_typica_names.txt pre2_Ob_typica_names.txt  > Ob_typica_names.txt
+grep 'n$' Ob_sample_names.txt  > Ob_nigra_names.txt
+
+grep 't$' Pp_sample_names.txt  > Pp_typica_names.txt
+grep 'm$' Pp_sample_names.txt  > Pp_monacharia_names.txt
+grep 'i$' Pp_sample_names.txt  > Pp_intermediate_names.txt
+
+vcftools --vcf Ob_merged.vcf --weir-fst-pop Ob_nigra_names.txt --weir-fst-pop Ob_typica_names.txt --out Obn_vs_Obt_rawFST
+
+vcftools --vcf Ob_trio_merged.vcf --weir-fst-pop Ob_nigra_names.txt --weir-fst-pop Ob_typica_names.txt --out Obn_vs_Obt_trio_FST
+
+vcftools --vcf Pp_merged.vcf --weir-fst-pop monacharia_names.txt --weir-fst-pop typica_names.txt --out Ppm_vs_Ppt_rawFST
+
+vcftools --vcf Pp_trio_merged.vcf --weir-fst-pop Pp_monacharia_names.txt --weir-fst-pop Pp_typica_names.txt --out Ppm_vs_Ppt_trio_FST
+
+vcftools --vcf Pp_trio_merged.vcf --weir-fst-pop Pp_intermediate_names.txt --weir-fst-pop Pp_typica_names.txt --out Ppi_vs_Ppt_trio_FST
+
+
+vcftools --vcf Ob_merged.vcf --weir-fst-pop Ob_nigra_names.txt --weir-fst-pop Ob_typica_names.txt --fst-window-size 30000 --out Obn_vs_Obt_FST_30kb
+
+vcftools --vcf Pp_merged.vcf --weir-fst-pop Pp_monacharia_names.txt --weir-fst-pop Pp_typica_names.txt --fst-window-size 1500 --out Ppm_vs_Ppt_FST_1500
+
+# Plink
+
+
+vcftools --remove Pp_intermediate_names.txt --vcf Pp_merged.vcf --recode --out Pp_monacharia_filtered
+vcftools --remove Pp_monacharia_names.txt --vcf Pp_merged.vcf --recode --out Pp_intermediate_filtered
+
+vcf-query -l Pp_monacharia_filtered.recode.vcf > Pp_mon_typ_names.txt 
+vcf-query -l Pp_intermediate_filtered.recode.vcf > Pp_int_typ_names.txt
+
+# Make phenotype text file using calc/excel: 3 columns -> copy and paste sample names to second column and use this condition in the third: =IF(RIGHT(B3, 1) = "t", 1, 2)
+# 1 is a control and 2 is a case phenotype (melanic)
+
+
+nano Ob_phenotypes.txt
+nano Pp_mon_typ_phenotypes.txt
+nano Pp_int_typ_phenotypes.txt
+
+
+
+plink --vcf Ob_merged.vcf --double-id --allow-extra-chr \
+--set-missing-var-ids @:# \
+--mind 0.5 \
+--make-bed --out Ob_plink \
+--vcf-half-call m --allow-no-sex --pheno Ob_phenotypes.txt
+
+plink --vcf Pp_monacharia_filtered.recode.vcf --double-id --allow-extra-chr \
+--set-missing-var-ids @:# \
+--mind 0.5 \
+--make-bed --out Pp_mon_typ_plink \
+--vcf-half-call m --allow-no-sex --pheno Pp_mon_typ_phenotypes.txt
+
+
+
+plink --vcf Pp_intermediate_filtered.recode.vcf --double-id --allow-extra-chr \
+--set-missing-var-ids @:# \
+--mind 0.5 \
+--make-bed --out Pp_int_typ_plink \
+--vcf-half-call m --allow-no-sex --pheno Pp_int_typ_phenotypes.txt 
+
+
+plink --bfile Ob_plink --assoc --out Ob_ass --allow-extra-chr --allow-no-sex
+plink --bfile Pp_mon_typ_plink --assoc --out Pp_mon_ass --allow-extra-chr --allow-no-sex
+plink --bfile Pp_int_typ_plink --assoc --out Pp_int_ass --allow-extra-chr --allow-no-sex
+
+
+sort --key=8 -nr Ob_ass.assoc | head
+sort --key=8 -nr Pp_mon_ass.assoc | head
+sort --key=8 -nr Pp_int_ass.assoc | head
+
+
