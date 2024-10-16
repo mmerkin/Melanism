@@ -24,7 +24,7 @@ POPLIST=(POP1 POP2 POP3 POP4)
 # Generate a vcf file for all pairwise combinations of populations after determining whether the vcf is gzipped
 
 if [[ $VCF =~ \.gz$ ]]; then
-	for i in "${POPLISTt[@]}"; do 
+	for i in "${POPLIST[@]}"; do 
 		for j in "${POPLIST[@]}"; do 
 			if [ $i = $j ]; then
 				continue
