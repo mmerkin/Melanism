@@ -38,7 +38,7 @@ fi
 # Generate the names column
 
 for i in "${POPLIST[@]}"; do for j in "${POPLIST[@]}"; do 
-if [[ "$i" = "$j" ]]; then
+if [ "$i" = "$j" ]; then
 continue
 fi
 echo "${i}-${j}"
@@ -47,7 +47,7 @@ done; done > ${SPECIESID}_pairwise_comparisons.txt
 # Generate the mean FST column
 
 for i in "${POPLIST[@]}"; do for j in "${POPLIST[@]}"; do 
-if [[ "$i" = "$j" ]]; then
+if [ "$i" = "$j" ]; then
 continue
 fi
 grep 'Weir and Cockerham mean Fst estimate:' "${SPECIESID}_${i}_vs_${j}.log" | sed 's/^.*: //'
@@ -56,7 +56,7 @@ done; done > ${SPECIESID}_mean_fsts.txt
 # Generate the weighted FST column
 
 for i in "${POPLIST[@]}"; do for j in "${POPLIST[@]}"; do 
-if [[ "$i" = "$j" ]]; then
+if [ "$i" = "$j" ]; then
 continue
 fi
 grep 'Weir and Cockerham weighted Fst estimate:' "${SPECIESID}_${i}_vs_${j}.log" | sed 's/^.*: //'
