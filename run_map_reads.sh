@@ -4,8 +4,8 @@
 
 # Reference genome
 REF=/path/to/reference.fa
-# Short reads
-datapath=/path/to/reads.fastq
+# Short reads, each read pair should be within a directory named after the sample eg datapath/sample/sample_R1.fastq.gz
+datapath=/path/to/reads/directory/
 # file to place final bams
 output=/path/to/output/file
 # Number of threads to use
