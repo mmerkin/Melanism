@@ -10,9 +10,13 @@ WIP
 
 Requirements: reference genome, short reads in fastq format
 
-1) Create a directory containing the reads
-2) Edit the script run_map_reads.sh by replacing the variables at the top
-3) Run the script to map, filter and index the reads, producing bam and bam.bai files
+1) Install bwa-mem2
+2) Index the refence genome
+```bash
+bwa-mem2 index <in.fasta>
+```
+3) Edit the script run_map_reads.sh by replacing the variables at the top
+4) Run the script to map, filter and index the reads, producing bam and bam.bai files
 
 
 # Isolation-by-distance
