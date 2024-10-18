@@ -1,7 +1,4 @@
-
-# Map, filter and index reads
-
-#!/bin/bash
+#! /bin/bash
 
 # Requirements: bwa-mem2
 
@@ -28,7 +25,7 @@ for file in "$datapath"/*; do
 filetag=${file##*/}
 
 echo "Mapping reads"
-bwa-mem2 mem -t 32 $REF $file/*R1*.fastq.gz $file/*R2*.fastq.gz > "$output/${filetag}.raw.bam"
+bwa-mem2 mem -t 32 $REF "$file/*R1*.fastq.gz" "$file/*R2*.fastq.gz" > "$output/${filetag}.raw.bam"
 
 echo "Sorting by name"
 samtools sort -@ $threads -n "$output/${filetag}.filtered.bam" -o "$output/${filetag}.sorted.n.bam"
