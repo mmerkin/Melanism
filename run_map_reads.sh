@@ -3,7 +3,7 @@
 # Requirements: bwa-mem2
 
 # Reference genome
-REF=/path/to/reference.fa
+REF=/path/to/bwa/indexed/reference.fa
 # Short reads, each read pair should be within a directory named after the sample eg datapath/sample/sample_R1.fastq.gz
 datapath=/path/to/reads/directory
 # file to place final bams
@@ -25,7 +25,7 @@ for file in "$datapath"/*; do
 filetag=${file##*/}
 
 echo "Mapping reads"
-bwa-mem2 mem -t 32 $REF "$file/*R1*.fastq.gz" "$file/*R2*.fastq.gz" > "$output/${filetag}.raw.bam"
+bwa-mem2 mem -t $threads $REF $file/*R1*.fastq.gz $file/*R2*.fastq.gz > "$output/${filetag}.raw.bam"
 
 echo "Sorting by name"
 samtools sort -@ $threads -n "$output/${filetag}.filtered.bam" -o "$output/${filetag}.sorted.n.bam"
