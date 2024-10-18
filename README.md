@@ -8,6 +8,8 @@ WIP
 
 # De novo variant calling
 
+### Map and filter reads
+
 Required files: reference genome, short reads in fastq format
 Required installations: bwa-mem2, samtools
 
@@ -16,8 +18,11 @@ Required installations: bwa-mem2, samtools
 bwa-mem2 index <in.fasta>
 ```
 2) Edit the script run_map_reads.sh by replacing the variables at the top
-3) Run the script to map, filter and index the reads, producing bam and bam.bai files
+3) Run the script to produce filtered bam and bam.bai files
 
+### Produce vcf file
+
+WIP
 
 # Isolation-by-distance (IBD)
 
