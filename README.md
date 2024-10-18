@@ -1,6 +1,18 @@
 # Melanism
 Files used in my melanism project
 
+# Long read assembly
+
+WIP
+
+
+# De novo variant calling
+
+Requirements: reference genome, short reads in fastq format
+
+1) Create a directory containing the reads
+2) Edit the script run_map_reads.sh by replacing the variables at the top
+3) Run the script to map, filter and index the reads, producing bam and bam.bai files
 
 
 # Isolation-by-distance
