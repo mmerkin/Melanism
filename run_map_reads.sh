@@ -28,7 +28,7 @@ echo "Mapping reads"
 bwa-mem2 mem -t $threads $REF $file/*R1*.fastq.gz $file/*R2*.fastq.gz > "$output/${filetag}.raw.bam"
 
 echo "Sorting by name"
-samtools sort -@ $threads -n "$output/${filetag}.filtered.bam" -o "$output/${filetag}.sorted.n.bam"
+samtools sort -@ $threads -n "$output/${filetag}.raw.bam" -o "$output/${filetag}.sorted.n.bam"
 
 # Fixmate -r filters the reads and -m adds a mate score tag for markdup to select the best reads to keep
 
