@@ -21,7 +21,7 @@ bwa-mem2 index <in.fasta>
 
 # Isolation-by-distance (IBD)
 
-## Calculate FST
+### Calculate FST
 
 Requirements: vcf, coordinates of each sample site
 
@@ -39,4 +39,4 @@ SPECIESID_pairwise_comparisons.txt contains a list of all the pairwise compariso
 SPECIESID_mean_fsts.txt contains the mean whole genome fst values for each pairwise comparison
 SPECIESID_weighted_fsts.txt contains the weighted whole genome fst values for each pairwise comparison
 
-## Plot IBD
+### Plot IBD
