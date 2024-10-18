@@ -8,22 +8,23 @@ WIP
 
 # De novo variant calling
 
-Requirements: reference genome, short reads in fastq format
+Required files: reference genome, short reads in fastq format
+Required installations: bwa-mem2, samtools
 
-1) Install bwa-mem2
-2) Index the refence genome
+1) Index the refence genome
 ```bash
 bwa-mem2 index <in.fasta>
 ```
-3) Edit the script run_map_reads.sh by replacing the variables at the top
-4) Run the script to map, filter and index the reads, producing bam and bam.bai files
+2) Edit the script run_map_reads.sh by replacing the variables at the top
+3) Run the script to map, filter and index the reads, producing bam and bam.bai files
 
 
 # Isolation-by-distance (IBD)
 
 ### Calculate FST
 
-Requirements: vcf, coordinates of each sample site
+Required files: vcf, coordinates of each sample site
+Required installations: vcftools
 
 1) Ensure vcftools is installed
 2) Create files listing the members of each population in the format SPECIESID_POP_samples.txt. Sample names can be viewed using
