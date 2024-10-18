@@ -34,7 +34,7 @@ Required files: vcf, coordinates of each sample site
 Required installations: vcftools
 
 1) Ensure vcftools is installed
-2) Create files listing the members of each population in the format SPECIESID_POP_samples.txt. Sample names can be viewed using
+2) Create files listing the members of each population in the format SPECIESID_POP_samples.txt as in the example. A list of all sample names can be created with vcftools using
 ```bash
 vcf-query -l VARIANTS.vcf > all_samples.txt
 ```
