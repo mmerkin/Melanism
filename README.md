@@ -11,6 +11,7 @@ WIP
 ### Map and filter reads
 
 Required files: reference genome, short reads in fastq format
+
 Required installations: bwa-mem2, samtools
 
 1) Index the refence genome
@@ -29,6 +30,7 @@ WIP
 ### Calculate FST
 
 Required files: vcf, coordinates of each sample site
+
 Required installations: vcftools
 
 1) Ensure vcftools is installed
@@ -41,8 +43,11 @@ vcf-query -l VARIANTS.vcf > all_samples.txt
 5) Replace the three variables at the top with your data, ensuring you are consistent with the files made in step #1
 6) Run the script with bash run_generate_pairwise_fst.sh
 7) Download the output files:
+
 SPECIESID_pairwise_comparisons.txt contains a list of all the pairwise comparisons
+
 SPECIESID_mean_fsts.txt contains the mean whole genome fst values for each pairwise comparison
+
 SPECIESID_weighted_fsts.txt contains the weighted whole genome fst values for each pairwise comparison
 
 ### Plot IBD
