@@ -24,7 +24,10 @@ bwa-mem2 index <in.fasta>
 Requirements: vcf, coordinates of each sample site
 
 1) Ensure vcftools is installed
-2) Create files listing the members of each population in the format SPECIESID_POP_samples.txt. Sample names can be viewed using vcf-query -l VARIANTS.vcf > all_samples.txt
+2) Create files listing the members of each population in the format SPECIESID_POP_samples.txt. Sample names can be viewed using
+```bash
+vcf-query -l VARIANTS.vcf > all_samples.txt
+```
 3) Make a list of all populations to be compared separated by either a tab or space
 4) Edit the script "run_generate_pairwise_fst.sh" using a text editor, such as nano
 5) Replace the three variables at the top with your data, ensuring you are consistent with the files made in step #1
