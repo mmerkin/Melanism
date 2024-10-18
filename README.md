@@ -19,7 +19,9 @@ bwa-mem2 index <in.fasta>
 4) Run the script to map, filter and index the reads, producing bam and bam.bai files
 
 
-# Isolation-by-distance
+# Isolation-by-distance (IBD)
+
+## Calculate FST
 
 Requirements: vcf, coordinates of each sample site
 
@@ -36,3 +38,5 @@ vcf-query -l VARIANTS.vcf > all_samples.txt
 SPECIESID_pairwise_comparisons.txt contains a list of all the pairwise comparisons
 SPECIESID_mean_fsts.txt contains the mean whole genome fst values for each pairwise comparison
 SPECIESID_weighted_fsts.txt contains the weighted whole genome fst values for each pairwise comparison
+
+## Plot IBD
