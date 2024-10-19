@@ -124,6 +124,79 @@ bcftools merge *.vcf.gz --threads 32 -o SPECIES_merged.vcf.gz
 
 # Association analysis
 
+Required files: vcf
+
+Required installations: plink
+
+conda environment: plink
+
+### SWAS (scaffold-wide association study)
+
+1) Create a plink [phenotype file](example_files/Ob_phenotypes.txt)
+2) Run the association analysis, filtering out individuals with more than 10% missing data and variants that are not called in more than 5% of individuals
+```bash
+plink --vcf VCF --double-id --allow-extra-chr \
+--set-missing-var-ids @:# --vcf-half-call m --allow-no-sex \
+--mind 0.1 --geno 0.05 \
+--pheno PHENOTYPES.txt \
+--assoc --out OUTPUT_NAME
+```
+3) Download the assoc file and place it in the R working directory
+4) Plot the data in R with ggplot
+```R
+library(tidyverse)
+
+read_table("FILE.assoc") %>%
+ggplot(.,aes(x=BP/1000000,y=-log10(P))) + geom_point() +theme_classic() +
+  xlab("position (Mb)")
+```
+### Genotype plot
+
+1) Extract the top n variants associated with the phenotype and create a new vcf. Pangenie can give multiple variants the same id, so both id and position information is used. Note that freebayes does not assign ids, so the position should be used only. The resulting vcf should also be sorted, compressed and indexed.
+```bash
+sort --key=8 -nr FILE.assoc | head -n 25 > FILE_first_25.txt
+awk '{ print $2 }' FILE_first_25.txt > FILE_25_linked_snp_ids.txt
+awk '{print $1"\t"$3}' FILE_first_25.txt > FILE_25_linked_snp_pos.txt
+
+vcftools --snps FILE_25_linked_snp_ids.txt --positions FILE_25_linked_snp_pos.txt --vcf VCF --recode --out FILE_25linked_snps
+bcftools sort FILE_25linked_snps.recode.vcf > FILE_25_sorted.vcf
+bgzip FILE_25_sorted.vcf
+tabix FILE_25_sorted.vcf.gz
+```
+2) Download the gVCF and index files and move them to the R working directory
+3) Make a [popmap csv file](example_files/Ob_popmap.csv)
+4) Construct the genotype plot in R
+```R
+library(GenotypePlot)
+library(tidyverse)
+library(vcfR)
+library(cowplot)
+
+vcftest <- read.vcfR("FILE_25_sorted.vcf.gz")
+
+SPECIES_popmap <- read.csv("POPMAP.csv")
+G_plot <- genotype_plot(vcf    = "FILE_25_sorted.vcf.gz", 
+                         chr = "CHROMOSOME",
+                         start  = START_POSITION,
+                         end    = END_POSITION,
+                         popmap = SPECIES_popmap,
+                         cluster        = T,
+                         plot_phased=F,
+                         colour_scheme=c("#332288","#88CCEE","#AA4499"))
+
+
+G_meta_order <- SPECIES_popmap[match(G_plot$dendro_labels, SPECIES_popmap$Ind),]
+G_seg <- ggplot() + geom_tile(aes(y=1:length(G_meta_order$Ind), x=0.1, 
+                                  fill=G_meta_order$pop), show.legend = F) + 
+  scale_fill_manual(values = c("black", "grey")) +
+  theme_void()
+
+plot_grid(G_plot$dendrogram,
+          G_seg, 
+          G_plot$genotypes + guides(fill="none"), rel_widths = c(1,0.5,5), 
+          axis = "tblr", align = "h", ncol = 3, nrow = 1)
+```
+
 # De novo variant calling
 
 ### Map and filter reads
@@ -131,6 +204,8 @@ bcftools merge *.vcf.gz --threads 32 -o SPECIES_merged.vcf.gz
 Required files: reference genome, short reads in fastq.gz format
 
 Required installations: bwa-mem2, samtools
+
+conda environment: mem2
 
 1) Index the refence genome
 ```bash
@@ -148,21 +223,17 @@ WIP
 
 # Isolation-by-distance (IBD)
 
-### Calculate FST
-
 Required files: vcf, coordinates of each sample site
 
 Required installations: vcftools
 
-1) Create files listing the members of each population in the format SPECIESID_POP_samples.txt as in the example. A list of all sample names can be created with vcftools using
+1) Create files listing the members of each population in the format SPECIESID_POP_samples.txt as in the [example](example_files/Ob_MTW_samples.txt). A list of all sample names can be created with vcftools using
 ```bash
 vcf-query -l VARIANTS.vcf > all_samples.txt
 ```
 2) Make a list of all populations to be compared separated by either a tab or space
-3) Edit the script [run_generate_pairwise_fst.sh](scripts/run_generate_pairwise_fst.sh) using a text editor, such as nano
-4) Replace the three variables at the top with your data, ensuring you are consistent with the files made in step #1
-5) Run the script
-6) Download the output files and save them into your R working directory:
+3) Run the script [run_generate_pairwise_fst.sh](scripts/run_generate_pairwise_fst.sh), ensuring that the variables are replaced
+4) Download the following output files and place these in your R working directory
 
 SPECIESID_pairwise_comparisons.txt contains a list of all the pairwise comparisons
 
@@ -170,6 +241,7 @@ SPECIESID_mean_fsts.txt contains the mean whole genome fst values for each pairw
 
 SPECIESID_weighted_fsts.txt contains the weighted whole genome fst values for each pairwise comparison
 
-### Plot IBD
+5) Create a csv file containing the coordinates of each sample site in UK grid coordinates as per the [example](example_files/)
+6) Run the R script [Plot_IBD.R](scripts/Plot_IBD.R)
 
 # Sweep signatures
