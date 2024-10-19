@@ -212,6 +212,6 @@ SPECIESID_mean_fsts.txt contains the mean whole genome fst values for each pairw
 SPECIESID_weighted_fsts.txt contains the weighted whole genome fst values for each pairwise comparison
 
 5) Create a csv file containing the coordinates of each sample site in UK grid coordinates as per the [example](example_files/Ob_coordinates.csv)
-6) Run the R script [Plot_IBD.R](scripts/Create_IBD_plot.R)
+6) Run the R script [Create_IBD_plot.R](scripts/Create_IBD_plot.R)
 
 # Sweep signatures
