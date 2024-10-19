@@ -181,7 +181,7 @@ conda environment: mem2
 ```bash
 bwa-mem2 index <in.fasta>
 ```
-2) Run the script [run_map_reads.sh](run_map_reads.sh) to produce filtered bam and bam.bai files, replacing the variables at the top
+2) Run the script [run_map_reads.sh](scripts/run_map_reads.sh) to produce filtered bam and bam.bai files, replacing the variables at the top
 
 ### Produce vcf file
 
