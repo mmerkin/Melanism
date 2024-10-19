@@ -74,9 +74,29 @@ Final sequencing statistics can be found [here](assembly_info)
 
 Conda environment: filtering
 
-WIP
+1) Use fastqc to generate reports for each file
+```bash
+fastqc *
+```
+2) Use multiqc to merge these into a single report
+```bash
+multiqc *_fastqc.zip
+```
 
 # Pangenome-based variant calling
+
+Required files: 
+
+Required installations:
+
+Conda environment:
+
+1) Create a file 
+2) Use minigraph-cactus to create the pangenom
+```bash
+cactus-pangenome job_store SPECIES_contigs.txt --outDir output_files --outName SPECIES_pangenome --reference reference --gbz clip filter full --viz --gfa clip full --vcf --vcfReference reference --logFile ./SPECIES_pangenome.log --consCores 8
+```
+
 
 # Association analysis
 
