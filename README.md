@@ -1,10 +1,16 @@
 # Melanism
-Files used in my melanism project
+
+The code and files used to compare melanic haplotypes across three species of geometrid moth
 
 # Long read assembly
 
+# Read quality control
+
 WIP
 
+# Pangenome-based variant calling
+
+# Association analysis
 
 # De novo variant calling
 
@@ -24,6 +30,10 @@ bwa-mem2 index <in.fasta>
 ### Produce vcf file
 
 WIP
+
+# vcf filtering
+
+# Principle component analysis
 
 # Isolation-by-distance (IBD)
 
@@ -51,3 +61,5 @@ SPECIESID_mean_fsts.txt contains the mean whole genome fst values for each pairw
 SPECIESID_weighted_fsts.txt contains the weighted whole genome fst values for each pairwise comparison
 
 ### Plot IBD
+
+# Sweep signatures
