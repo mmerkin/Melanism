@@ -1,0 +1,5 @@
+reference Ob_genome.fa
+nigra_trio.1 Ob-5-F1-02_hap1.fa
+nigra_trio.2 Ob-5-F1-02_hap2.fa
+nigra_alt.1 Ob_MTW_2013_11n_hap1.fa
+nigra_alt.2 Ob_MTW_2013_11n_hap2.fa
