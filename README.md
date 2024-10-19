@@ -14,7 +14,7 @@ conda env create -n NAME -f FILE.yml
 
 Required files: HiFi reads in fastq.gz format, HiC data in fastq.gz format, parental short reads for trio individuals in fastq.gz format
 
-Required installations: yak, hifiasm, gfatools, yahs, compleasm, gas, seqkit
+Required installations: yak, hifiasm, gfatools, yahs, compleasm, gaas, seqkit
 Conda environment: assembly
 
 ### HIFI read assembly
