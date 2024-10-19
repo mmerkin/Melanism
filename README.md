@@ -41,7 +41,10 @@ vcf-query -l VARIANTS.vcf > all_samples.txt
 3) Make a list of all populations to be compared separated by either a tab or space
 4) Edit the script [run_generate_pairwise_fst.sh](run_generate_pairwise_fst.sh) using a text editor, such as nano
 5) Replace the three variables at the top with your data, ensuring you are consistent with the files made in step #1
-6) Run the script with bash run_generate_pairwise_fst.sh
+6) Run the script with
+```bash
+bash run_generate_pairwise_fst.sh
+``` 
 7) Download the output files:
 
 SPECIESID_pairwise_comparisons.txt contains a list of all the pairwise comparisons
