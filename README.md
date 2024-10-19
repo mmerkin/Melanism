@@ -72,6 +72,10 @@ Final sequencing statistics can be found [here](assembly_info)
 
 # Read quality control
 
+Required files: bam or fastq files
+
+Required installations: fastqc and multiqc
+
 Conda environment: filtering
 
 1) Use fastqc to generate reports for each file
@@ -85,18 +89,38 @@ multiqc *_fastqc.zip
 
 # Pangenome-based variant calling
 
-Required files: 
+Required files: reference genome, long-read contigs, short reads
 
-Required installations:
+Required installations: cactus, pangenie, vcflib, bcftools, parallel
 
-Conda environment:
+Conda environment: pangenie
+Note: cactus had to be installed separately as explained [here](https://github.com/ComparativeGenomicsToolkit/cactus/blob/v2.9.2/BIN-INSTALL.md)
 
-1) Create a file 
-2) Use minigraph-cactus to create the pangenom
+1) Create a file containing the names of the reference and contig names and their file paths, as shown [here](example_files/Ob_contigs.txt)
+2) Use minigraph-cactus to create the pangenome
 ```bash
 cactus-pangenome job_store SPECIES_contigs.txt --outDir output_files --outName SPECIES_pangenome --reference reference --gbz clip filter full --viz --gfa clip full --vcf --vcfReference reference --logFile ./SPECIES_pangenome.log --consCores 8
 ```
-
+3) Remove overlapping variants, variants with more than 200 alleles and the info field that results in error messages later on
+```bash
+vcfwave -I 15000 -t 32 SPECIES_pangenome.vcf > SPECIES_pangenome.wave.vcf
+bcftools norm -m- SPECIES_pangenome.wave.vcf -o SPECIES_pangenome_norm.vcf --threads 32
+bcftools sort -o SPECIES_pangenome_norm_sorted.vcf SPECIES_pangenome_norm.vcf
+vcfcreatemulti SPECIES_pangenome_norm_sorted.vcf > SPECIES_pangenome_multi.vcf
+bcftools view --max-alleles 200 SPECIES_pangenome_multi.vcf > SPECIES_pangenome_reduced_multi.vcf
+bcftools annotate -x INFO SPECIES_pangenome_reduced_multi.vcf > SPECIES_pangenome_noinfo_reduced_multi.vcf
+```
+4) Index the reference genome for pangenie
+```bash
+PATH/TO/PanGenie-index -v SPECIES_pangenome_noinfo_reduced_multi.vcf -r GENOME.fa -t 32 -o SPECIES_pangenie
+```
+5) Call genotypes for short-read samples using the script [run_pangenie_genotyping.sh](scripts/run_pangenie_genotyping.sh)
+6) Compress, index and merge all vcfs in the directory to produce a final vcf containing variants from each sample
+```bash
+parallel bgzip {} ::: *.vcf
+for f in ./*.vcf.gz; do tabix -p vcf -f $f;done
+bcftools merge *.vcf.gz --threads 32 -o SPECIES_merged.vcf.gz
+```
 
 # Association analysis
 
