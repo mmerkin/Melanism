@@ -33,7 +33,7 @@ hifiasm -o OUTPUT.asm -t 32 HIFI.fastq.gz
 ```
 4) Convert the output gfa to a fasta file
 ```bash
-gfa2fa HAPLOTYPE.p_ctg.gfa > HAPLOTYPE.fa
+gfatools gfa2fa HAPLOTYPE.p_ctg.gfa > HAPLOTYPE.fa
 ```
 5) Calculate error scores for trio samples
 ```bash
