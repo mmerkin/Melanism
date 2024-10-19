@@ -39,8 +39,8 @@ Required installations: vcftools
 vcf-query -l VARIANTS.vcf > all_samples.txt
 ```
 3) Make a list of all populations to be compared separated by either a tab or space
-4) Edit the script [run_generate_pairwise_fst.sh](scripts/run_generate_pairwise_fst.sh) using a text editor, such as nano
-5) Replace the three variables at the top with your data, ensuring you are consistent with the files made in step #1
+4) Download the script [run_generate_pairwise_fst.sh](scripts/run_generate_pairwise_fst.sh) 
+5) Replace the variables at the top with your data, ensuring you are consistent with the files made in step #2
 6) Run the script
 7) Download the output files and save them into your R working directory:
 
