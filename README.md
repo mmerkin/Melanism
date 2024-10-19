@@ -42,7 +42,7 @@ vcf-query -l VARIANTS.vcf > all_samples.txt
 4) Edit the script [run_generate_pairwise_fst.sh](run_generate_pairwise_fst.sh) using a text editor, such as nano
 5) Replace the three variables at the top with your data, ensuring you are consistent with the files made in step #1
 6) Run the script
-7) Download the output files and save them into you R working directory:
+7) Download the output files and save them into your R working directory:
 
 SPECIESID_pairwise_comparisons.txt contains a list of all the pairwise comparisons
 
