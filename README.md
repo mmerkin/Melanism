@@ -136,8 +136,7 @@ Required installations: bwa-mem2, samtools
 ```bash
 bwa-mem2 index <in.fasta>
 ```
-2) Edit the script run_map_reads.sh by replacing the variables at the top
-3) Run the script to produce filtered bam and bam.bai files
+2) Run the script [run_map_reads.sh](run_map_reads.sh) to produce filtered bam and bam.bai files, replacing the variables at the top
 
 ### Produce vcf file
 
