@@ -86,6 +86,7 @@ fastqc *
 ```bash
 multiqc *_fastqc.zip
 ```
+3) View the average depth of each sample with the script [run_generate_depths.sh](scripts/run_generate_depths.sh)
 
 # Pangenome-based variant calling
 
