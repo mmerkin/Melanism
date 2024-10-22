@@ -196,7 +196,7 @@ samtools faidx REFERENCE.fa
 ```
 3) Call variants with bcftools
 ```bash
-
+bcftools mpileup -f /path/to/REFERENCE.fa --bam-list bam_list.txt | bcftools call -mv -Ob -o SPECIES_bcftools.bcf
 ```
 
 # vcf filtering
