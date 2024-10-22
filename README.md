@@ -186,7 +186,18 @@ bwa-mem2 index <in.fasta>
 
 ### Produce vcf file
 
-WIP
+1) Create a list of all bam files
+```bash
+ls *.bam > bam_list.txt
+```
+2) Index the reference genome
+```bash
+samtools faidx REFERENCE.fa
+```
+3) Call variants with bcftools
+```bash
+
+```
 
 # vcf filtering
 
