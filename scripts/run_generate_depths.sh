@@ -3,7 +3,7 @@
 ## Set variables
 
 datapath=/path/to/short/reads
-# file extension eg bam, fastq.gz
+# file extension eg bam, .sorted.rm.bam, fastq.gz
 filetype=bam
 output=SPECIES_depth.tsv
 
