@@ -2,10 +2,10 @@
 
 ## Set variables
 
-datapath=/pub64/mattm/read_mapping/Ob/dedup
+datapath=/path/to/short/reads
 # file extension eg bam, fastq.gz
-filetype=dedup.bam
-output=Ob_depth.tsv
+filetype=bam
+output=SPECIES_depth.tsv
 
 
 
