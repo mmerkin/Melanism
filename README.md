@@ -138,6 +138,7 @@ parallel bgzip {} ::: *.vcf
 for f in ./*.vcf.gz; do tabix -p vcf -f $f;done
 bcftools merge *.vcf.gz --threads 32 -o SPECIES_merged.vcf.gz
 ```
+Note: parallel needs to be cited as Tange, O. (2024). GNU Parallel 20240722 ('Assange') [stable]. Zenodo. https://doi.org/10.5281/zenodo.12789352
 
 # Association analysis
 
