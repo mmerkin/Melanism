@@ -138,6 +138,7 @@ parallel bgzip {} ::: *.vcf
 for f in ./*.vcf.gz; do tabix -p vcf -f $f;done
 bcftools merge *.vcf.gz --threads 32 -o SPECIES_merged.vcf.gz
 ```
+Note: parallel needs to be cited as Tange, O. (2024). GNU Parallel 20240722 ('Assange') [stable]. Zenodo. https://doi.org/10.5281/zenodo.12789352
 
 # Association analysis
 
@@ -232,3 +233,28 @@ SPECIESID_weighted_fsts.txt contains the weighted whole genome fst values for ea
 6) Run the R script [Create_IBD_plot.R](scripts/Create_IBD_plot.R)
 
 # Sweep signatures
+
+lassip code WIP
+
+```bash
+bcftools reheader -s Ppfb_newnames.txt -o Ppfb_renamed.vcf  ~/pub64/mattm/vcf_analysis/SNPfiltering/Pp_attempt3/Ppfb_allfilters2.recode.vcf
+
+
+cat Ppfb_newnames.txt | awk '{ print $1 "\tPp" }' > Pp_popmap.txt
+
+
+#! /bin/bash
+
+VCF=Ppfb_renamed.vcf
+popmap=Pp_popmap.txt
+
+for window in 2500 2250 2000 1750 1500 1250 1000; do
+./lassip-v1.2.0 --vcf $VCF --threads 64 --hapstats --lassi --out "${filetag}_${window}win" --winsize $window --winstep 500 --pop $popmap
+done
+
+for window in 900 800 700 600 500 400 300 200; do
+./lassip-v1.2.0 --vcf $VCF --threads 64 --hapstats --lassi --out "${filetag}_${window}win" --winsize $window --winstep 100 --pop $popmap
+done
+
+```
+
