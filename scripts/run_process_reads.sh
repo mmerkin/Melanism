@@ -20,7 +20,7 @@ set -e  # Causes the code to abort if there is an error
 
 # Aborts the code if variables aren't set
 
-if [[ -z $datapath ]] || [[ -z $output ]] || [[ -z $threads ]] || [[ -z $remove_temp ]] || [[ -z $REF ]]; then
+if [[ -z $datapath ]] || [[ -z $output ]] || [[ -z $threads ]] || [[ -z $remove_temp ]] || [[ -z $REF ]] || [[ -z $remove_ctgs ]]; then
 echo "At least one essential variable is missing. Make sure to define the variables before running the script" 
 exit 1
 fi
