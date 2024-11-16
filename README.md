@@ -52,7 +52,8 @@ yahs HAPLOTYPE.fa MAPPED_HIC.bam
 /PATH/TO/haphic pipeline HAPLOTYPE.fa MAPPED_HIC.bam CHROMOSOME_NUMBER --correct_nrounds 10 --threads 32
 ```
 4) HIC-contact maps can be constructed using juicer from the yahs output, which is explained on the [yahs github](https://github.com/c-zhou/yahs?tab=readme-ov-file#generate-hic-contact-maps)
-5) Obtain a list of scaffolds to keep from either the contact map or a GENESPACE riparian plot
+5) Obtain a list of scaffolds to keep from either the contact map or a GENESPACE riparian plot. For Ob, this is everything after group31; for Pp, this is everything after 117 and also 67 (which appears to be bacterial-> 
+4Mb genome of *Pantoea anthophila*).
 6) Remove unwanted scaffolds after creating a text file containing the names of the scaffolds to be removed (without the ">")
 ```bash
 grep ">" SPECIES_SCAFFOLDS.fa | sed 's/>//'
@@ -205,7 +206,7 @@ bwa-mem2 index <in.fasta>
 
 ### Produce vcf file
 
-WIP
+WIP: freebayes in parallel
 
 # vcf filtering
 
@@ -259,4 +260,3 @@ for window in 900 800 700 600 500 400 300 200; do
 done
 
 ```
-
