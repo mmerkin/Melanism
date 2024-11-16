@@ -51,11 +51,13 @@ yahs HAPLOTYPE.fa MAPPED_HIC.bam
 ```bash
 /PATH/TO/haphic pipeline HAPLOTYPE.fa MAPPED_HIC.bam CHROMOSOME_NUMBER --correct_nrounds 10 --threads 32
 ```
-4) Use seqkit to extract the 31 chromosomes of the scalloped hazel
+4) HIC-contact maps can be constructed using juicer from the yahs output, which is explained on the [yahs github](https://github.com/c-zhou/yahs?tab=readme-ov-file#generate-hic-contact-maps)
+5) Obtain a list of scaffolds to keep from either the contact map or a GENESPACE riparian plot
+6) Remove unwanted scaffolds after creating a text file containing the names of the scaffolds to be removed (without the ">")
 ```bash
-seqkit head -n 31 SCAFFOLDS.fa > GENOME.fa 
+grep ">" SPECIES_SCAFFOLDS.fa | sed 's/>//'
+seqkit grep -v -n -f UNWANTED_SCAFFOLDS.txt SPECIES_SCAFFOLDS.fa > SPECIES_GENOME.fa
 ```
-5) HIC-contact maps can be constructed using juicer from the yahs output, which is explained on the [yahs github](https://github.com/c-zhou/yahs?tab=readme-ov-file#generate-hic-contact-maps)
 
 ### Sequencing statistics
 
