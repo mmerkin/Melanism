@@ -260,3 +260,66 @@ for window in 900 800 700 600 500 400 300 200; do
 done
 
 ```
+
+# Extra
+
+Here is a list of each melanic individual and which haplotype they possess
+
+## Odontopera
+
+### nigra primary haplotype
+
+Sample_11_89-Ob_RWD_2004_33_n
+Sample_11_78-Ob_PRS_2013_11_n
+Sample_11_79-Ob_PRS_2013_12_n
+Sample_11_76-Ob_PRS_2013_09_n
+Sample_11_13-SWN_2011_mel_male
+Sample_11_77-Ob_PRS_2013_10_n
+Sample_10_93-Ob_morecombe_2013_01_n
+Sample_11_48-BAS_2013_03_n
+Sample_11_80-Ob_PRS_2013_13_n
+Sample_11_74-Ob_PRS_2013_07_n
+Sample_11_75-Ob_PRS_2013_08_n
+Sample_11_43-Heath_Charnock_2013_01_n
+nigra_trio
+Sample_11_5-MAL_2011_05_n
+
+### nigra secondary haplotype
+
+Sample_10_94-OB_MT_2013_01_n
+Sample_11_32-MTW_2013_12_n
+nigra_alt (Ob_MTW_2013_11n)
+Sample_11_14-Swiths_Rd_Leics_2011_n
+Sample_11_61-Ob_MLT_2004_02_n
+
+### nigra other haplotype
+
+Sample_11_81-Ob_KLD_2013_01_n
+Sample_11_67-Ob_CE1_2004_02_n
+Sample_11_17-Ob_fam15_F1N_2
+Sample_11_15-Ormston_2011_n
+Sample_11_16-Ob_fam15_F1N_1
+
+## Phigalia
+
+### Monacharia primary haplotype
+	
+Sample_10_31-Pp_IHW_2012_14_m
+Sample_10_28-Pp_IHW_2012_11_m
+Sample_10_63-Pp_IHW_2014_03_m
+Sample_10_90-Pp_IHW_2012_05_m
+Sample_10_91-Pp_IHW_2012_07_m
+monacharia_trio
+Sample_10_87-Pp_IHW_2012_02_m
+Sample_10_27-Pp_IHW_2012_10_m
+
+### Monacharia secondary haplotype
+	
+monacharia_alt (13_Pp_IHW_2012_09_M)
+Sample_10_88-Pp_IHW_2012_03_m
+Sample_10_8-PP_ARG_2013_08_m
+
+### Monacharia other haplotypes
+
+Sample_10_29-Pp_IHW_2012_12_m
+Sample_10_86-Pp_IHW_2012_01_m
