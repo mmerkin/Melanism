@@ -208,9 +208,12 @@ bwa-mem2 index <in.fasta>
 
 WIP: freebayes in parallel
 
-# vcf filtering
+# Filtered vcf analysis
 
-# Principle component analysis
+1) Run the script [run_filter_vcfs.sh](scripts/run_filter_reads.sh] to thoroughly filter the vcfs for the pca. A threshold value should be specified with which to filter out individuals based on their missingness. This was determined by produced the pca plot and identifying any outliers. If the outliers were the samples with the highest missingness, the threshold was lowered to remove these samples until this was no longer the case. For reference, the missingness thresholds chosen for Ob was 0.3, Pp was 0.025 and Ob was 0.45.
+2) Download the plink files ending in ".eigenvec" and ".eigenval" and run the R script [Create_PCA_plot.R]
+3) Reperform the association analysis in the same manner as for the pangenie vcfs, using the filtered vcfs created by freebayes instead. 
+
 
 # Isolation-by-distance (IBD)
 
