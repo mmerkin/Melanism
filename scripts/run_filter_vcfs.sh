@@ -1,9 +1,9 @@
 #! /bin/bash
 
-input=~/Geometrids_melanism_project/final_vcfs/Pp_2alleles_freebayes.vcf.gz
-species=Ppfb
-Z="scaffold_1"
-remove=Pp_remove_list.txt
+input=
+species=
+Z=
+remove=
 
 vcftools --gzvcf $input --not-chr $Z --recode --recode-INFO-all --out ${species}
 
