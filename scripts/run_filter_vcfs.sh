@@ -4,6 +4,7 @@ input=
 species=
 Z=
 remove=
+threshold=
 
 vcftools --gzvcf $input --not-chr $Z --recode --recode-INFO-all --out ${species}
 
@@ -29,7 +30,7 @@ vcftools --vcf ${species}_filtered.vcf --max-missing 0.95 --minDP 3 --mac 2 --ma
 --recode --recode-INFO-all --out ${species}_allfilters
 
 vcftools --vcf ${species}_allfilters.recode.vcf --missing-indv
-mawk '$5 > 0.3' out.imiss | cut -f1 > lowDP.indv
+mawk -v threshold="$threshold" '$5 > threshold' out.imiss | cut -f1 > lowDP.indv
 vcftools --vcf ${species}_allfilters.recode.vcf --remove lowDP.indv --recode --recode-INFO-all --out ${species}_FILTERED
 
 echo -e "${a}\t${b}\t${c}\t${d}"
