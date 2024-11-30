@@ -202,20 +202,35 @@ conda environment: mem2
 ```bash
 bwa-mem2 index <in.fasta>
 ```
-2) Run the script [run_map_reads.sh](scripts/run_map_reads.sh) to produce filtered bam and bam.bai files, replacing the variables at the top
+2) Run the script [run_map_reads.sh](scripts/run_map_reads.sh) to produce filtered bam and bam.bai files, replacing the variables at the top. This removes unmapped and secondary reads, then removes duplicate reads. A mate-score tag is added with "fixmate" and the read with the lowest score is removed. 
 
 ### Produce vcf file
 
-WIP: freebayes in parallel
+Required files: reference genome, read alignment bam files
 
-# Filtered vcf analysis
+Required installations: bamadrrg, freebayes, parallel
+
+conda environment: freebayes
+
+
+1) Merge all of the bam files together with bamaddrg.sh
+2) Run freebayes in parallel to call variants with the best 2 alleles.
+```bash
+freebayes-parallel <(fasta_generate_regions.py $REF.fa.fai 100000) $THREADS -f $REF --use-best-n-alleles 2 "$MERGED_bamaddrg.bam" > Bb_2alleles_freebayes.vcf
+```
+
+### Filtered vcf analysis
 
 1) Run the script [run_filter_vcfs.sh](scripts/run_filter_reads.sh] to thoroughly filter the vcfs for the pca. A threshold value should be specified with which to filter out individuals based on their missingness. This was determined by produced the pca plot and identifying any outliers. If the outliers were the samples with the highest missingness, the threshold was lowered to remove these samples until this was no longer the case. For reference, the missingness thresholds chosen for Ob was 0.3, Pp was 0.025 and Ob was 0.45.
 2) Download the plink files ending in ".eigenvec" and ".eigenval" and run the R script [Create_PCA_plot.R]
 3) Reperform the association analysis in the same manner as for the pangenie vcfs, using the filtered vcfs created by freebayes instead. 
 
 
-# Isolation-by-distance (IBD)
+# Scrapped ideas
+
+The following analyses were attempted, but not used in the manuscript. This was primarily due to concerns that the data were not comparable across species eg Biston betularia samples were taken from too narrow of a range for IBD and sequence capture targeted too small of a region to identify sweep signatures. 
+
+###Isolation-by-distance (IBD)
 
 Required files: vcf, coordinates of each sample site
 
