@@ -43,11 +43,11 @@ yak trioeval -t16 PATERNAL.yak MATERNAL.yak HAPLOTYPE.fa
 ### Reference genome construction
 
 1) Filter and map HIC data using the [arima mapping pipeline](https://github.com/ArimaGenomics/mapping_pipeline)
-2) Scaffold the contigs
+2) Scaffold the contigs for Phigalia
 ```bash
 yahs HAPLOTYPE.fa MAPPED_HIC.bam
 ```
-3) Perform further scaffolding using haphic, which needs to be installed locally. This worked for the scalloped hazel with its 31 chromosomes, but the pale brindled beauty produced a single scaffold, so the scaffolds in step #2 were used instead
+3) Perform Odontopera scaffolding using haphic, which needs to be installed locally. The two different approaches were used as Phigalia scaffolding produced a single scaffold with haphic, whilst Odontopera had too many scaffolds with yahs.
 ```bash
 /PATH/TO/haphic pipeline HAPLOTYPE.fa MAPPED_HIC.bam CHROMOSOME_NUMBER --correct_nrounds 10 --threads 32
 ```
