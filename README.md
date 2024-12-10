@@ -216,7 +216,12 @@ conda environment: freebayes
 1) Merge all of the bam files together with bamaddrg.sh
 2) Run freebayes in parallel to call variants with the best 2 alleles.
 ```bash
-freebayes-parallel <(fasta_generate_regions.py $REF.fa.fai 100000) $THREADS -f $REF --use-best-n-alleles 2 "$MERGED_bamaddrg.bam" > Bb_2alleles_freebayes.vcf
+freebayes-parallel <(fasta_generate_regions.py $REF.fa.fai 100000) $THREADS -f $REF --use-best-n-alleles 2 "$MERGED_bamaddrg.bam" > $SPECIES_2alleles_freebayes.vcf
+```
+3) Rename samples by removing file path info and the file suffix 
+```bash
+vcf-query -l $VCF | sed -e 's:^.*/::' -e 's:.processed.bam::' > $NEW_NAMES.txt
+bcftools reheader -s $NEW_NAMES.txt -o $SPECIES_freebayes.vcf.gz  $SPECIES_2alleles_freebayes.vcf.gz
 ```
 
 ### Filtered vcf analysis
