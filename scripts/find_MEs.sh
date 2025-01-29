@@ -19,7 +19,3 @@ IFS=$'\t' read -r chr _ _ start stop _ _ <<< "$mRNA"
 echo -e "$filebase\t$merian\t$chr\t$start\t$stop" >> "$output_file"
 
 done
-
-
-#To do: take output, sort by second column, count number of uniq values for third column (can do in awk?), investigate suitable thresholds
-#Attempt to make a plot
