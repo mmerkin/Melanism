@@ -2,14 +2,14 @@
 
 # Frequently changed variables
 
-datapath=/pub64/mattm/short_reads/Ob_reads/typica/50plus
-output=/pub64/mattm/Geometrids_melanism_project/read_mapping/Ob
-threads=20
-remove_temp=true
-REF=/pub64/mattm/Geometrids_melanism_project/read_mapping/references/Ob_scaffolds.fa
+datapath=/path/to/short/reads
+output=/path/to/output
+threads=32
+remove_temp=true # true or false (whether to remove temporary files)
+REF=/path/to/reference
 
-remove_ctgs=true
-UNWANTED=Ob_unwanted_contigs.txt
+remove_ctgs=true # true or false (whether to remove certain contigs eg W or unplaced scaffold)
+UNWANTED=file.txt # file containing contigs to remove ("" if remove_ctgs is false)
 
 
 ## Code
@@ -81,36 +81,36 @@ bwa-mem2 mem -t $threads $REF $file/*R1*.fastq.gz $file/*R2*.fastq.gz > "$output
 
 update_progress
 
-samtools view -@ 32 -b -f 3 -F 2828 -q 20 "$output/$filetag/$filetag.raw.bam" -o "$output/$filetag/$filetag.filtered.bam"
+samtools view -@ $threads -b -f 3 -F 2828 -q 20 "$output/$filetag/$filetag.raw.bam" -o "$output/$filetag/$filetag.filtered.bam"
 
 update_progress
 
 # Sort the reads by name for fixmate input, discarding the stderr output to dev/null so it won't display on the command line
 
-samtools sort -@ 32 -n "$output/$filetag/$filetag.filtered.bam" -o "$output/$filetag/$filetag.sorted.n.bam" 2> /dev/null
+samtools sort -@ $threads -n "$output/$filetag/$filetag.filtered.bam" -o "$output/$filetag/$filetag.sorted.n.bam" 2> /dev/null
 
 update_progress
 
 # Add mate score tags for duplicate removal
 
-samtools fixmate -@ 32 -m "$output/$filetag/$filetag.sorted.n.bam" "$output/$filetag/$filetag.fixmate.bam"
+samtools fixmate -@ $threads -m "$output/$filetag/$filetag.sorted.n.bam" "$output/$filetag/$filetag.fixmate.bam"
 
 update_progress
 
 # Sort the reads by position for markdup input
 
-samtools sort -@ 32 "$output/$filetag/$filetag.fixmate.bam" -o "$output/$filetag/$filetag.sorted.p.bam" 2> /dev/null
+samtools sort -@ $threads "$output/$filetag/$filetag.fixmate.bam" -o "$output/$filetag/$filetag.sorted.p.bam" 2> /dev/null
 
 update_progress
 
 if $remove_ctgs; then
     # Remove duplicate reads
-    samtools markdup -r -@ 32 "$output/$filetag/$filetag.sorted.p.bam" "$output/$filetag/$filetag.markdup.bam"
+    samtools markdup -r -@ $threads "$output/$filetag/$filetag.sorted.p.bam" "$output/$filetag/$filetag.markdup.bam"
     update_progress
     # Remove unwanted contigs
     samtools view -h "$output/$filetag/$filetag.markdup.bam" | egrep -v -f $UNWANTED | samtools view -bS > "$output/$filetag/$filetag.processed.bam"
 else
-    samtools markdup -r -@ 32 "$output/$filetag/$filetag.sorted.p.bam" "$output/$filetag/$filetag.processed.bam"
+    samtools markdup -r -@ $threads "$output/$filetag/$filetag.sorted.p.bam" "$output/$filetag/$filetag.processed.bam"
 fi
 
 update_progress
