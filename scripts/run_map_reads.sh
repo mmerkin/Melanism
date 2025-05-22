@@ -36,7 +36,7 @@ samtools sort -@ $threads -n "$output/${filetag}.filtered.bam" -o "$output/${fil
 
 # Fixmate -r filters the reads and -m adds a mate score tag for markdup to select the best reads to keep
 
-echo "Removing unmapped and secondary reads"
+echo "Adding fixmate tags"
 samtools fixmate -rm -@ $threads "$output/${filetag}.sorted.n.bam" "$output/${filetag}.fixmate.bam"
 
 echo "Sorting by position"
