@@ -2,8 +2,6 @@
 
 The code and files used to compare melanic haplotypes across three species of geometrid moth.
 
-Any words in all caps correspond to variables that need to be replaced with your data, unless otherwise specified.
-
 Conda environment yaml files can be loaded with this command:
 
 ```bash
@@ -18,6 +16,12 @@ Required installations: yak, hifiasm, gfatools, yahs, compleasm, gaas, seqkit
 Conda environment: assembly
 
 ### HIFI read assembly
+
+Two runs of HIFI sequencing were performed on *Phigalia pilosaria*, which were first concatanted to form a single file
+
+```bash
+cat Pp_HiFi_1.fastq.gz Pp_HiFi_2.fastq.gz > Pp_HiFi.fastq.gz
+```
 
 1) Count the kmers from both parental read sets. Note that yak needs to be fed the same reads twice for paired end reads. 
 ```bash
