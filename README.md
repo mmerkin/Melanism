@@ -64,6 +64,13 @@ grep ">" $SPECIES_SCAFFOLDS.fa | sed 's/>//'
 seqkit grep -v -n -f $UNWANTED_SCAFFOLDS.txt $SPECIES_SCAFFOLDS.fa > $SPECIES_GENOME.fa
 ```
 
+convert the pretext agp to final fasta file
+
+```bash
+pretext-to-asm -a Pp_mat_scaffolds.fa -p Pp_mat.pretext.agp_1 -o Pp_mat_extra.fa
+```
+
+
 ### Sequencing statistics
 
 1) Calculate compleasm score of genome completeness (similar to BUSCO)
