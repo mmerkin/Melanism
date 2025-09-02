@@ -37,7 +37,7 @@ hifiasm -o $OUTPUT.asm -t 32 $HIFI.fastq.gz
 ```
 4) Convert the output gfa to a fasta file
 ```bash
-gfatools gfa2fa $HAPLOTYPE.p_ctg.gfa > $HAPLOTYPE.fa
+awk '/^S/{print ">"$2;print $3}' test.p_ctg.gfa > test.p_ctg.fa
 ```
 5) Calculate error scores for trio samples
 ```bash
@@ -51,25 +51,27 @@ yak trioeval -t16 $PATERNAL.yak $MATERNAL.yak $HAPLOTYPE.fa
 ```bash
 yahs $HAPLOTYPE.fa $MAPPED_HIC.bam
 ```
-3) Perform Odontopera scaffolding using haphic, which needs to be installed locally. The two different approaches were used as Phigalia scaffolding produced a single scaffold with haphic, whilst Odontopera had too many scaffolds with yahs.
+3) Create a pretext file to view and edit the HiC contact map
 ```bash
-/PATH/TO/haphic pipeline $HAPLOTYPE.fa $MAPPED_HIC.bam $CHROMOSOME_NUMBER --correct_nrounds 10 --threads 32
+# Create a list of scaffold sizes
+samtools index yahs.out_scaffolds_final.fa.fai
+cut -f1,2 yahs.out_scaffolds_final.fa.fai > chrom_sizes.txt
+
+# Create pretext file
+(awk 'BEGIN{print "## pairs format v1.0"} {print "#chromsize:\t"$1"\t"$2} END {print "#columns:\treadID\tchr1\tpos1\tchr2\tpos2\tstrand1\tstrand2"}' chrom_sizes.txt; awk '{print ".\t"$2"\t"$3"\t"$6"\t"$7"\t.\t."}' alignments_sorted.txt) | PretextMap -o $OUTPUT.pretext
 ```
-4) HIC-contact maps can be constructed using juicer from the yahs output, which is explained on the [yahs github](https://github.com/c-zhou/yahs?tab=readme-ov-file#generate-hic-contact-maps)
-5) Obtain a list of scaffolds to keep from either the contact map or a GENESPACE riparian plot. For Ob, this is everything after group31; for Pp, this is everything after 117 and also 67 (which appears to be bacterial-> 
+4) Edit the file in pretext view to rearrange any obvious scaffolding mistakes and paint the new scaffolds. A tutorial is provided on the [rapid curation gitlab](https://gitlab.com/wtsi-grit/rapid-curation/-/blob/main/PretextView-Tutorial.pdf?ref_type=heads)
+5) Save the new pretext agp and use it to create a new fasta file
+```bash
+pretext-to-asm -a $YAHS_scaffolds.fa -p $PRETEXT.pretext.agp_1 -o $FINAL.fa
+```
+6) Obtain a list of scaffolds to keep from either the contact map or a GENESPACE riparian plot. For Ob, this is everything after group31; for Pp, this is everything after 117 and also 67 (which appears to be bacterial-> 
 4Mb genome of *Pantoea anthophila*).
-6) Remove unwanted scaffolds after creating a text file containing the names of the scaffolds to be removed (without the ">")
+7) Remove unwanted scaffolds after creating a text file containing the names of the scaffolds to be removed (without the ">")
 ```bash
 grep ">" $SPECIES_SCAFFOLDS.fa | sed 's/>//'
 seqkit grep -v -n -f $UNWANTED_SCAFFOLDS.txt $SPECIES_SCAFFOLDS.fa > $SPECIES_GENOME.fa
 ```
-
-convert the pretext agp to final fasta file
-
-```bash
-pretext-to-asm -a Pp_mat_scaffolds.fa -p Pp_mat.pretext.agp_1 -o Pp_mat_extra.fa
-```
-
 
 ### Sequencing statistics
 
